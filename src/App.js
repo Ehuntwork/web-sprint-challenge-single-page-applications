@@ -55,6 +55,7 @@ const App = () => {
       axios.post('https://reqres.in/api/users', newPizza)
       .then(res=>{
         setPizza([...pizza, res.data])
+        console.log(res.data)
       })
       .catch(err=>{
         console.log(err)
