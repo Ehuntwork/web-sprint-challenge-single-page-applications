@@ -7,7 +7,6 @@ import { Route } from 'react-router-dom';
 import scheme from './Validation/scheme'
 import Header from './Components/Header'
 import PizzaForm from './Components/PizzaForm'
-import Confirmation from './Components/Confirmation'
 
 ///intial states
 const intialValues = {
@@ -63,6 +62,7 @@ const App = () => {
       })
       .finally(() => {
         setFormValues(intialValues)
+        console.log('hey')
       })
     }
   
@@ -93,7 +93,7 @@ const App = () => {
     const onSubmit = evt =>{//this is where you call postNewUser
       evt.preventDefault()
   
-      const newUser = {
+      const newPizza = {
         name:formValues.name,
         size:formValues.size,
         toppings:{
@@ -105,25 +105,48 @@ const App = () => {
         specialInstructions:formValues.specialInstructions,
       }
   
-      postNewUser(newUser)
+      postNewPizza(newPizza)
     }
+
+    ///unique to this project stuff////////
+    const onCheckboxChange = evt =>{
+      const { name, checked } = evt.target
+      setFormValues({
+        ...formValues, 
+        toppings:{
+          ...formValues.toppings,
+          [name]: checked
+        }
+      })
+    }
+
+    //not sure what this does but I don't have time to not include it
+    useEffect(()=>{
+      getNewPizza()
+    },[])
+
+    //disables button until form is valid with Yup
+    useEffect(() => {
+      scheme.isValid(formValues).then(valid => {
+        console.log(valid)
+        setDisabled(!valid)
+      })
+    }, [formValues])
+
   return (
     <div className='App'>
     <Header path='/'/>
-    <Route exact path='/pizzaform'>
+    <Route path='/pizza'>
       <PizzaForm
         values={formValues}
         onInputChange={onInputChange}
-        onCheckboxChange={}
+        onCheckboxChange={onCheckboxChange}
         onSubmit={onSubmit}
         disabled={disabled}
         errors={error}
       />
     </Route>
 
-    <Route path='/pizzaform/pizza'>
-      <Confirmation details={pizza}/>
-    </Route>
   </div>
   );
 };
